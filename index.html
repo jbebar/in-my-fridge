@@ -1,7 +1,22 @@
+<!DOCTYPE html>
 <html>
-<div>
-    In my fridge I have...
-    and
-</div>
+
+<head>
+    <title>In my fridge I have...</title>
+</head>
+
+<body>
+    <div id="root">
+
+    </div>
+    <script>
+        const recipesUri = "https://jbebar.github.io/in-my-fridge/recipes.json"
+        const root = document.getElementById('root')
+        fetch(recipesUri)
+            .then(r => r.json())
+            .then(d => root.textContent = JSON.stringify(d, null, 10))
+    </script>
+</body>
+
 
 </html>
