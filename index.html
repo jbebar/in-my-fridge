@@ -9,12 +9,17 @@
     <div id="root">
 
     </div>
-    <script>
-        const recipesUri = "https://jbebar.github.io/in-my-fridge/recipes.json"
-        const root = document.getElementById('root')
-        fetch(recipesUri)
-            .then(r => r.json())
-            .then(d => root.textContent = JSON.stringify(d, null, 10))
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.8.3/babel.js"></script>
+    <script type="text/babel">
+        (async () => {
+            const recipesUri = "https://jbebar.github.io/in-my-fridge/recipes.json"
+            const rootContainer = document.querySelector('#root')
+            const recipesNames = await fetch(recipesUri).then(r => r.json()).then(d => d.map(e => <li key={e.name}>{e.name}</li>))
+            const recipes = <ul>{recipesNames}</ul>;
+            ReactDOM.render(recipes, rootContainer)
+        })()
     </script>
 </body>
 
