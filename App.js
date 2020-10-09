@@ -1,5 +1,4 @@
 async function fetchRecipes() {
-  console.log(location.hostname);
   const recipesHost = location.hostname === "localhost" ? "http://localhost:3000" : "https://jbebar.github.io/in-my-fridge";
   return await fetch(`${recipesHost}/recipes.json`)
     .then((r) => r.json())
@@ -11,6 +10,9 @@ function RecipeList(props) {
   const recipeTableStyle = {
     lineHeight: 2,
     width: "300px",
+    position: "absolute",
+    top: "100px",
+    left: "25%",
   };
   return <div style={recipeTableStyle}> {lines} </div>;
 }
