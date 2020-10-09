@@ -41,7 +41,8 @@ function RecipeItem(props) {
 // Main component
 
 function App() {
-  const [recipes, setRecipes] = React.useState([]);
+  const [matchingRecipes, setMatchingRecipes] = React.useState([]);
+  const [allRecipes, setAllRecipes] = React.useState([]);
   const [knownIngredients, setKnownIngredients] = React.useState([]);
   const [resetSearch, setResetSearch] = React.useState(false);
 
@@ -49,10 +50,11 @@ function App() {
     const initState = async () => {
       const retrievedRecipes = await fetchRecipes();
       setKnownIngredients(retrievedRecipes.flatMap((r) => r.ingredients));
-      setRecipes(retrievedRecipes);
+      setAllRecipes(retrievedRecipes);
+      setMatchingRecipes(retrievedRecipes);
     };
     initState();
-  }, [fetchRecipes, setKnownIngredients, setRecipes]);
+  }, [fetchRecipes, setKnownIngredients, setMatchingRecipes]);
 
   const onSearchChange = (evt) => {
     if (evt.target.value.length === 0) {
@@ -60,8 +62,8 @@ function App() {
     }
     const searchIngredients = evt.target.value.split(" ").filter((i) => i.length > 0);
     if (searchIngredients.length > 0 && arrayIncludes(knownIngredients, searchIngredients)) {
-      const matchingRecipes = recipes.filter((r) => arrayIncludes(r.ingredients, searchIngredients));
-      setRecipes(matchingRecipes);
+      const matchingRecipes = allRecipes.filter((r) => arrayIncludes(r.ingredients, searchIngredients));
+      setMatchingRecipes(matchingRecipes);
     }
   };
 
@@ -69,7 +71,7 @@ function App() {
     if (resetSearch) {
       const initRecipes = async () => {
         const retrievedRecipes = await fetchRecipes();
-        setRecipes(retrievedRecipes);
+        setMatchingRecipes(retrievedRecipes);
       };
       initRecipes();
       setResetSearch(false);
@@ -77,7 +79,7 @@ function App() {
   }, [resetSearch, setResetSearch]);
 
   const toRecipesNames = () => {
-    return recipes.map((r) => r.name);
+    return matchingRecipes.map((r) => r.name);
   };
 
   const searchContainerStyle = {
@@ -85,6 +87,7 @@ function App() {
     top: "100px",
     left: "25%",
   };
+
   return (
     <div style={searchContainerStyle}>
       <label style={{ display: "block" }} htmlFor="ingredientsInput">
