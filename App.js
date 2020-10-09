@@ -59,8 +59,6 @@ function App() {
       setResetSearch(true);
     }
     const searchIngredients = evt.target.value.split(" ").filter((i) => i.length > 0);
-    console.log(knownIngredients);
-    console.log(searchIngredients);
     if (searchIngredients.length > 0 && arrayIncludes(knownIngredients, searchIngredients)) {
       const matchingRecipes = recipes.filter((r) => arrayIncludes(r.ingredients, searchIngredients));
       setRecipes(matchingRecipes);
