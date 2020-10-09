@@ -44,7 +44,6 @@ function App() {
   const [matchingRecipes, setMatchingRecipes] = React.useState([]);
   const [allRecipes, setAllRecipes] = React.useState([]);
   const [knownIngredients, setKnownIngredients] = React.useState([]);
-  const [resetSearch, setResetSearch] = React.useState(false);
 
   React.useEffect(() => {
     const initState = async () => {
@@ -58,7 +57,7 @@ function App() {
 
   const onSearchChange = (evt) => {
     if (evt.target.value.length === 0) {
-      setResetSearch(true);
+      setMatchingRecipes(allRecipes);
     }
     const searchIngredients = evt.target.value.split(" ").filter((i) => i.length > 0);
     if (searchIngredients.length > 0 && arrayIncludes(knownIngredients, searchIngredients)) {
@@ -66,17 +65,6 @@ function App() {
       setMatchingRecipes(matchingRecipes);
     }
   };
-
-  React.useEffect(() => {
-    if (resetSearch) {
-      const initRecipes = async () => {
-        const retrievedRecipes = await fetchRecipes();
-        setMatchingRecipes(retrievedRecipes);
-      };
-      initRecipes();
-      setResetSearch(false);
-    }
-  }, [resetSearch, setResetSearch]);
 
   const toRecipesNames = () => {
     return matchingRecipes.map((r) => r.name);
