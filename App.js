@@ -42,29 +42,26 @@ function RecipeItem(props) {
 
 function App() {
   const [recipes, setRecipes] = React.useState([]);
-  const [knownIngredients, setKnwonIngredients] = React.useState([]);
+  const [knownIngredients, setKnownIngredients] = React.useState([]);
   const [resetSearch, setResetSearch] = React.useState(false);
-  const initRecipes = async () => {
-    setRecipes(await fetchRecipes());
-  };
-  const initKnownIngredients = async () => {
-    const recipes = await fetchRecipes();
-    const allIngredients = recipes.map((r) => r.ingredients);
-    setKnwonIngredients(allIngredients);
-  };
 
   React.useEffect(() => {
-    initRecipes();
-    initKnownIngredients();
-  }, [fetchRecipes, initKnownIngredients]);
+    const initState = async () => {
+      const retrievedRecipes = await fetchRecipes();
+      setKnownIngredients(retrievedRecipes.flatMap((r) => r.ingredients));
+      setRecipes(retrievedRecipes);
+    };
+    initState();
+  }, [fetchRecipes, setKnownIngredients, setRecipes]);
 
   const onSearchChange = (evt) => {
     if (evt.target.value.length === 0) {
       setResetSearch(true);
     }
     const searchIngredients = evt.target.value.split(" ").filter((i) => i.length > 0);
-    if (searchIngredients.length > 0) {
-      console.log(searchIngredients);
+    console.log(knownIngredients);
+    console.log(searchIngredients);
+    if (searchIngredients.length > 0 && arrayIncludes(knownIngredients, searchIngredients)) {
       const matchingRecipes = recipes.filter((r) => arrayIncludes(r.ingredients, searchIngredients));
       setRecipes(matchingRecipes);
     }
@@ -72,10 +69,14 @@ function App() {
 
   React.useEffect(() => {
     if (resetSearch) {
+      const initRecipes = async () => {
+        const retrievedRecipes = await fetchRecipes();
+        setRecipes(retrievedRecipes);
+      };
       initRecipes();
       setResetSearch(false);
     }
-  }, [resetSearch, setResetSearch, initRecipes]);
+  }, [resetSearch, setResetSearch]);
 
   const toRecipesNames = () => {
     return recipes.map((r) => r.name);
