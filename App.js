@@ -1,11 +1,11 @@
 // Services
 
 async function fetchRecipes() {
-  const recipesHost = location.hostname === "localhost" ? "http://localhost:3000" : "https://jbebar.github.io/in-my-fridge";
-  const d = await fetch(`${recipesHost}/recipes.json`).then((r) => r.json());
+  const recipesUrl = location.hostname === "localhost" ? "http://localhost:3000/mock-recipes.json" : "https://www.macabine.bar/index.json";
+  const d = await fetch(`${recipesUrl}`).then((r) => r.json());
   return d.map((r) => {
     return {
-      name: r.name,
+      name: r.title,
       ingredients: r.ingredients,
     };
   });
@@ -96,8 +96,9 @@ function arrayIncludes(containerArray, containedArray) {
   if (containerArray.length === 0) {
     return false;
   }
+  const joinedContainer = containerArray.join().toLowerCase();
   for (let i = 0; i < containedArray.length; i++) {
-    if (!containerArray.includes(containedArray[i])) {
+    if (!joinedContainer.includes(containedArray[i].toLowerCase())) {
       return false;
     }
   }
