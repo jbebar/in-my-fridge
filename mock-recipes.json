@@ -1,0 +1,58 @@
+[
+  {
+    "ingredients": [
+      "300g d'anneaux de calamars",
+      "125g de farine",
+      "1 oeuf",
+      "10cl de lait",
+      "5cl d'eau",
+      "1 sachet de levure chimique",
+      "huile de friture (huile de pépin de raisin)",
+      "1 pincé de sel"
+    ],
+    "title": "Beignets de calamars"
+  },
+  {
+    "ingredients": [
+      "2 blancs de poulet",
+      "1 oeuf",
+      "1 jus de citron",
+      "Zeste de citron",
+      "2 biscottes, ou 4 cuillères de panure",
+      "Herbes de provence",
+      "Sel \u0026 poivre",
+      "huile d'olive",
+      "1 yaourt blanc"
+    ],
+    "title": "Boulettes citronées au poulet"
+  },
+  {
+    "ingredients": [
+      "500 g de farine de blé",
+      "18 cl d’eau",
+      "125 g de yaourt bulgare (soit 1 pot)",
+      "4 c. à soupe d’huile végétale",
+      "1 c. à café de sel",
+      "1 c. à café de sucre",
+      "2 pincée de levure chimique",
+      "8 g de levure boulanger",
+      "12 portions de vache qui rit (2 par naans)"
+    ],
+    "title": "Cheese Naans Cévenols"
+  },
+  {
+    "ingredients": [
+      "500 g de farine de blé",
+      "18 cl d’eau",
+      "125 g de yaourt bulgare (soit 1 pot)",
+      "4 c. à soupe d’huile végétale",
+      "1 c. à café de sel",
+      "1 c. à café de sucre",
+      "2 pincée de levure chimique",
+      "8 g de levure boulanger",
+      "marouale",
+      "12 portions de vache qui rit (2 par naans)"
+    ],
+    "title": "Cheese Naans Nordistes"
+  }
+]

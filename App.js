@@ -6,7 +6,7 @@ async function fetchRecipes() {
   return d.map((r) => {
     return {
       name: r.title,
-      ingredients: r.ingredients,
+      ingredients: r.ingredients
     };
   });
 }
@@ -14,7 +14,7 @@ async function fetchRecipes() {
 // Components
 
 function RecipeList(props) {
-  const lines = props.names.map((n) => <RecipeItem key={n} name={n} />);
+  const lines = props.names.map((n) => <RecipeItem key={n.name} name={n.name} ingredients={n.ingredients} />);
   const recipeTableStyle = {
     lineHeight: 2,
     width: "300px",
@@ -67,7 +67,9 @@ function App() {
   };
 
   const toRecipesNames = () => {
-    return matchingRecipes.map((r) => r.name);
+    return matchingRecipes.map((r) => {
+      return { name: r.name, ingredients: r.ingredients };
+    });
   };
 
   const searchContainerStyle = {
