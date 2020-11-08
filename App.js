@@ -6,7 +6,7 @@ async function fetchRecipes() {
   return d.map((r) => {
     return {
       name: r.title,
-      ingredients: r.ingredients
+      ingredients: r.ingredients,
     };
   });
 }
@@ -14,14 +14,15 @@ async function fetchRecipes() {
 // Components
 
 function RecipeList(props) {
-  const lines = props.names.map((n) => <RecipeItem key={n.name} name={n.name} ingredients={n.ingredients} />);
   const recipeTableStyle = {
     lineHeight: 2,
     width: "300px",
   };
   return (
     <div key="recipeList" style={recipeTableStyle}>
-      {lines}
+      {props.names.map((n) => (
+        <RecipeItem key={n.name} name={n.name} ingredients={n.ingredients} matchingIngredients={props.matchingIngredients} />
+      ))}
     </div>
   );
 }
@@ -35,7 +36,26 @@ function RecipeItem(props) {
     borderRadius: "5px",
     textAlign: "center",
   };
-  return <div style={recipeStyle}>{props.name}</div>;
+  const ingredientStyle = (ingredient) => {
+    return {
+      fontSize: 15,
+      color: props.matchingIngredients.includes(ingredient) ? "LimeGreen" : "Grey",
+      fontFamily: "cursive",
+      textAlign: "center",
+    };
+  };
+  return (
+    <div style={recipeStyle}>
+      <div>{props.name}</div>
+      <ul>
+        {props.ingredients.map((i) => (
+          <li key={i} style={ingredientStyle(i)}>
+            {i}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 // Main component
@@ -44,6 +64,7 @@ function App() {
   const [matchingRecipes, setMatchingRecipes] = React.useState([]);
   const [allRecipes, setAllRecipes] = React.useState([]);
   const [knownIngredients, setKnownIngredients] = React.useState([]);
+  const [matchingIngredients, setMatchingIngredients] = React.useState([]);
 
   React.useEffect(() => {
     const initState = async () => {
@@ -64,11 +85,14 @@ function App() {
       const matchingRecipes = allRecipes.filter((r) => arrayIncludes(r.ingredients, searchIngredients));
       setMatchingRecipes(matchingRecipes);
     }
+
+    const searchIngredientsLowerCase = searchIngredients.map((s) => s.toLowerCase());
+    setMatchingIngredients(searchIngredientsLowerCase.map((s) => knownIngredients.find((k) => k.includes(s))));
   };
 
-  const toRecipesNames = () => {
+  const toRecipes = () => {
     return matchingRecipes.map((r) => {
-      return { name: r.name, ingredients: r.ingredients };
+      return { name: r.name, ingredients: r.ingredients.map((i) => i.toLowerCase()) };
     });
   };
 
@@ -84,7 +108,7 @@ function App() {
         In my fridge I have...
       </label>
       <input type="text" id="ingredientsInput" name="ingredientsInput" onChange={onSearchChange} />
-      <RecipeList names={toRecipesNames()} />
+      <RecipeList names={toRecipes()} matchingIngredients={matchingIngredients} />
     </div>
   );
 }
