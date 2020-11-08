@@ -13,15 +13,17 @@ async function fetchRecipes() {
 
 // Components
 
-function RecipeList(props) {
-  const recipeTableStyle = {
-    lineHeight: 2,
-    width: "300px",
-  };
+function Recipes(props) {
   return (
-    <div key="recipeList" style={recipeTableStyle}>
-      {props.names.map((n) => (
-        <RecipeItem key={n.name} name={n.name} ingredients={n.ingredients} matchingIngredients={props.matchingIngredients} />
+    <div
+      key="recipeList"
+      style={{
+        lineHeight: 2,
+        width: "300px",
+      }}
+    >
+      {props.recipes.map((r) => (
+        <RecipeItem key={r.name} name={r.name} ingredients={r.ingredients} matchingIngredients={props.matchingIngredients} />
       ))}
     </div>
   );
@@ -44,7 +46,7 @@ function RecipeItem(props) {
       textAlign: "center",
     };
   };
-  return (
+  return arrayIncludes(props.ingredients, props.matchingIngredients) ? (
     <div style={recipeStyle}>
       <div>{props.name}</div>
       <ul>
@@ -55,13 +57,12 @@ function RecipeItem(props) {
         ))}
       </ul>
     </div>
-  );
+  ) : null;
 }
 
 // Main component
 
 function App() {
-  const [matchingRecipes, setMatchingRecipes] = React.useState([]);
   const [allRecipes, setAllRecipes] = React.useState([]);
   const [knownIngredients, setKnownIngredients] = React.useState([]);
   const [matchingIngredients, setMatchingIngredients] = React.useState([]);
@@ -69,31 +70,25 @@ function App() {
   React.useEffect(() => {
     const initState = async () => {
       const retrievedRecipes = await fetchRecipes();
-      setKnownIngredients(retrievedRecipes.flatMap((r) => r.ingredients));
-      setAllRecipes(retrievedRecipes);
-      setMatchingRecipes(retrievedRecipes);
+      setAllRecipes(
+        retrievedRecipes.map((r) => {
+          return { name: r.name, ingredients: r.ingredients.map((i) => i.toLowerCase()) };
+        })
+      );
     };
     initState();
-  }, [fetchRecipes, setKnownIngredients, setMatchingRecipes]);
+  }, [fetchRecipes]);
+
+  React.useEffect(() => {
+    setKnownIngredients(allRecipes.flatMap((r) => r.ingredients));
+  }, [allRecipes, setKnownIngredients]);
 
   const onSearchChange = (evt) => {
-    if (evt.target.value.length === 0) {
-      setMatchingRecipes(allRecipes);
-    }
-    const searchIngredients = evt.target.value.split(" ").filter((i) => i.length > 0);
-    if (searchIngredients.length > 0 && arrayIncludes(knownIngredients, searchIngredients)) {
-      const matchingRecipes = allRecipes.filter((r) => arrayIncludes(r.ingredients, searchIngredients));
-      setMatchingRecipes(matchingRecipes);
-    }
-
-    const searchIngredientsLowerCase = searchIngredients.map((s) => s.toLowerCase());
-    setMatchingIngredients(searchIngredientsLowerCase.map((s) => knownIngredients.find((k) => k.includes(s))));
-  };
-
-  const toRecipes = () => {
-    return matchingRecipes.map((r) => {
-      return { name: r.name, ingredients: r.ingredients.map((i) => i.toLowerCase()) };
-    });
+    const searchIngredients = evt.target.value
+      .split(" ")
+      .filter((i) => i.length > 0)
+      .map((s) => s.toLowerCase());
+    setMatchingIngredients(searchIngredients.map((s) => knownIngredients.find((k) => k.includes(s))));
   };
 
   const searchContainerStyle = {
@@ -108,7 +103,7 @@ function App() {
         In my fridge I have...
       </label>
       <input type="text" id="ingredientsInput" name="ingredientsInput" onChange={onSearchChange} />
-      <RecipeList names={toRecipes()} matchingIngredients={matchingIngredients} />
+      <Recipes recipes={allRecipes} matchingIngredients={matchingIngredients} />
     </div>
   );
 }
@@ -124,7 +119,7 @@ function arrayIncludes(containerArray, containedArray) {
   }
   const joinedContainer = containerArray.join().toLowerCase();
   for (let i = 0; i < containedArray.length; i++) {
-    if (!joinedContainer.includes(containedArray[i].toLowerCase())) {
+    if (containedArray[i] !== undefined && !joinedContainer.includes(containedArray[i].toLowerCase())) {
       return false;
     }
   }
