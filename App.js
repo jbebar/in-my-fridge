@@ -2,11 +2,11 @@
 
 async function fetchRecipes() {
   const recipesUrl = location.hostname === "localhost" ? "http://localhost:3000/mock-recipes.json" : "https://www.macabine.bar/index.json";
-  const d = await fetch(`${recipesUrl}`).then((r) => r.json());
+  const d = await fetch(recipesUrl).then((r) => r.json());
   return d.map((r) => {
     return {
       name: r.title,
-      ingredients: r.ingredients,
+      ingredients: r.ingredients.map((i) => i.toLowerCase()),
     };
   });
 }
@@ -46,7 +46,10 @@ function RecipeItem(props) {
       textAlign: "center",
     };
   };
-  return arrayIncludes(props.ingredients, props.matchingIngredients) ? (
+  console.log("matching ingredients", props.matchingIngredients);
+  console.log("recipes ingredients", props.ingredients);
+  const recipeMatchingIngredients = props.matchingIngredients.filter((m) => props.ingredients.includes(m));
+  return props.matchingIngredients.length === 0 || recipeMatchingIngredients.length > 0 ? (
     <div style={recipeStyle}>
       <div>{props.name}</div>
       <ul>
@@ -70,11 +73,7 @@ function App() {
   React.useEffect(() => {
     const initState = async () => {
       const retrievedRecipes = await fetchRecipes();
-      setAllRecipes(
-        retrievedRecipes.map((r) => {
-          return { name: r.name, ingredients: r.ingredients.map((i) => i.toLowerCase()) };
-        })
-      );
+      setAllRecipes(retrievedRecipes);
     };
     initState();
   }, [fetchRecipes]);
@@ -84,11 +83,12 @@ function App() {
   }, [allRecipes, setKnownIngredients]);
 
   const onSearchChange = (evt) => {
-    const searchIngredients = evt.target.value
+    const searchInput = evt.target.value
       .split(" ")
       .filter((i) => i.length > 0)
       .map((s) => s.toLowerCase());
-    setMatchingIngredients(searchIngredients.map((s) => knownIngredients.find((k) => k.includes(s))));
+    const matchingIngredients = knownIngredients.filter((k) => searchInput.some((s) => k.includes(s)));
+    setMatchingIngredients(matchingIngredients);
   };
 
   const searchContainerStyle = {
@@ -110,18 +110,3 @@ function App() {
 
 const rootContainer = document.querySelector("#root");
 ReactDOM.render(<App />, rootContainer);
-
-// Arrays utilities
-
-function arrayIncludes(containerArray, containedArray) {
-  if (containerArray.length === 0) {
-    return false;
-  }
-  const joinedContainer = containerArray.join().toLowerCase();
-  for (let i = 0; i < containedArray.length; i++) {
-    if (containedArray[i] !== undefined && !joinedContainer.includes(containedArray[i].toLowerCase())) {
-      return false;
-    }
-  }
-  return true;
-}
