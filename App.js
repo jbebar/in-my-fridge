@@ -46,8 +46,6 @@ function RecipeItem(props) {
       textAlign: "center",
     };
   };
-  console.log("matching ingredients", props.matchingIngredients);
-  console.log("recipes ingredients", props.ingredients);
   const recipeMatchingIngredients = props.matchingIngredients.filter((m) => props.ingredients.includes(m));
   return props.matchingIngredients.length === 0 || recipeMatchingIngredients.length > 0 ? (
     <div style={recipeStyle}>
